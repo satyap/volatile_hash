@@ -12,5 +12,6 @@ Gem::Specification.new do |s|
 
     s.homepage    = 'http://github.com/satyap/volatile_hash'
 
-    s.add_development_dependency 'rspec'
+    s.add_development_dependency 'rspec', '~> 2.8.0'
+    s.add_development_dependency 'rr', '~> 1.0.4'
 end
