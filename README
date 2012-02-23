@@ -1,1 +1,8 @@
 Implements a Time-to-live based cache and a Least-recently-used cache.
+
+
+= Test/Development
+
+gem install bundler
+bundle install
+rake
