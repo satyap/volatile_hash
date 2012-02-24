@@ -1,8 +1,29 @@
 Implements a Time-to-live based cache and a Least-recently-used cache.
 
+= Usage
+
+cache = VolatileHash.new(:strategy => 'ttl', :ttl => 3600)
+#  TTL-based, default TTL is 3600 seconds)
+cache = VolatileHash.new(:strategy => 'lru', :max => 10)
+#  LRU-based, default max is 10. That's the maximum keys to remember.
+
+cache[:key] = "some expensive-to-calculate value, like a database query result"
+cache["any key"] = "or a remote api call"
+
+#  memo-ization:
+def get_value_for(key)
+    @cache ||= VolatileHash.new(:strategy => 'ttl', :ttl => 3600)
+    @cache[key] ||= get_from_api(key)
+end
 
 = Test/Development
 
 gem install bundler
 bundle install
 rake
+
+= Credits
+
+Based on a gist by github.com user joshaven at https://gist.github.com/184837
+
+Some input from github user supertaz, considerable help on the TTL-based version.
