@@ -3,34 +3,90 @@ require 'spec_helper'
 describe VolatileHash do
     describe "TTL mode" do
         before do
-            @cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.5)
+            @cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.5, :max => 1)
             @x = Object.new
+            @cache[:x] = @x.to_s
         end
 
         it "should remember cached values" do
-            @cache[:x] = @x.to_s
-
             @cache[:x].should == @x.to_s
         end
         
         it "should not have to re-calculate cached values" do
-            @cache[:x] = @x.to_s
-
             dont_allow(@x).to_s
             @cache[:x] ||= @x.to_s
         end
 
         it "should forget cached values after the TTL expires" do
-            @cache[:x] = @x.to_s
             @cache[:x].should == @x.to_s
 
             sleep(0.6)
 
             @cache[:x].should be_nil
         end
+
+        it "should not throw out least-recently used value" do
+            @cache[:y] =1
+
+            @cache[:x].should_not be_nil
+            @cache[:y].should_not be_nil
+        end
     end
 
     describe "LRU mode" do
+        before do
+            @cache = VolatileHash.new(:strategy => 'lru', :max => 3, :ttl => 0.1)
+            @x = Object.new
+            @y = Object.new
+            @z = Object.new
+            @cache[:x] = @x.to_s
+        end
+
+        it "should remember cached values" do
+            @cache[:x].should == @x.to_s
+        end
+
+        it "should not have to re-calculate cached values" do
+            dont_allow(@x).to_s
+            @cache[:x] ||= @x.to_s
+        end
+
+        it "should have only up to the last max values" do
+            @cache[:x].should == @x.to_s
+            @cache[:y].should be_nil
+            @cache[:z].should be_nil
+            @cache[:w].should be_nil
+
+            @cache[:y] = @y.to_s
+            @cache[:z] = @z.to_s
+            @cache[:w] = @z.to_s
+
+            @cache[:x].should be_nil
+            @cache[:y].should == @y.to_s
+            @cache[:z].should == @z.to_s
+            @cache[:w].should == @z.to_s
+        end
+
+        it "should throw out the least recently accessed value" do
+            @cache[:y] = @y.to_s
+            @cache[:z] = @z.to_s
+            @cache[:y].should == @y.to_s
+            @cache[:x].should == @x.to_s
+            @cache[:z].should == @z.to_s
+
+            @cache[:w] = @x.to_s
+
+            @cache[:x].should == @x.to_s
+            @cache[:y].should be_nil
+            @cache[:z].should == @z.to_s
+            @cache[:w].should == @x.to_s
+        end
+
+        it "should not expire by ttl" do
+            sleep(0.3)
+            @cache[:x].should_not be_nil
+        end
+
     end
 end
 
