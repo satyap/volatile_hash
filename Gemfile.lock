@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    volatile_hash (0.0.0)
+    volatile_hash (0.0.1)
 
 GEM
   remote: http://rubygems.org/

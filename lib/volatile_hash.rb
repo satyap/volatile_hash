@@ -9,6 +9,7 @@ class VolatileHash
             @max_items = options[:max] || 10
             @item_order = []
         end
+        @refresh = options[:refresh] or false
     end
 
     def [](key)
@@ -19,6 +20,9 @@ class VolatileHash
                 @registry.delete key
                 value = nil
             end
+            if @refresh and @registry[key]
+                set_ttl(key)
+            end
         else
             lru_update key if @cache.has_key?(key)
         end
@@ -27,7 +31,7 @@ class VolatileHash
 
     def []=(key, value)
         if @strategy == 'ttl'
-            @registry[key] = Time.now + @ttl.to_f
+            set_ttl(key)
             @cache[key] = value
         else
             @item_order.unshift key
@@ -37,6 +41,10 @@ class VolatileHash
     end
 
     private
+    def set_ttl(key)
+        @registry[key] = Time.now + @ttl.to_f
+    end
+
     def expired?(key)
         Time.now > @registry[key]
     end

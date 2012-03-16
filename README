@@ -3,7 +3,13 @@ Implements a Time-to-live based cache and a Least-recently-used cache.
 = Usage
 
 cache = VolatileHash.new(:strategy => 'ttl', :ttl => 3600)
-#  TTL-based, default TTL is 3600 seconds)
+#  TTL-based, default TTL is 3600 seconds. The value will be cached no longer
+#  than 3600 seconds after it is inserted into the cache.
+
+cache = VolatileHash.new(:strategy => 'ttl', :ttl => 3600, :refresh => true)
+#  TTL-based, default TTL is 3600 seconds. The value will be cached no longer
+#  than 3600 seconds after it is inserted or accessed.
+
 cache = VolatileHash.new(:strategy => 'lru', :max => 10)
 #  LRU-based, default max is 10. That's the maximum keys to remember.
 

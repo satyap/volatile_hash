@@ -1,9 +1,13 @@
 require 'spec_helper'
 
 describe VolatileHash do
+    class Volatilehash
+        attr_reader :cache
+    end
+
     describe "TTL mode" do
         before do
-            @cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.5, :max => 1)
+            @cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.7, :max => 1)
             @x = Object.new
             @cache[:x] = @x.to_s
         end
@@ -20,16 +24,35 @@ describe VolatileHash do
         it "should forget cached values after the TTL expires" do
             @cache[:x].should == @x.to_s
 
-            sleep(0.6)
+            sleep(0.8)
 
             @cache[:x].should be_nil
         end
 
         it "should not throw out least-recently used value" do
-            @cache[:y] =1
+            @cache[:y] = 1
 
             @cache[:x].should_not be_nil
             @cache[:y].should_not be_nil
+        end
+        
+        it "should not reset TTL when an item is accessed" do
+            sleep(0.4)
+            @cache[:x].should == @x.to_s
+            sleep(0.4)
+            @cache[:x].should be_nil
+        end
+
+        context "when asked to refresh TTL on access" do
+            it "should not forget cached values after TTL expires" do
+                cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.7, :refresh => true)
+                x = Object.new
+                cache[:x] = @x.to_s
+                sleep(0.4)
+                cache[:x].should == @x.to_s
+                sleep(0.4)
+                cache[:x].should == @x.to_s
+            end
         end
     end
 
