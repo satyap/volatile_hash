@@ -33,3 +33,5 @@ rake
 Based on a gist by github.com user joshaven at https://gist.github.com/184837
 
 Some input from github user supertaz, considerable help on the TTL-based version.
+Idea for the LRU cache developed at TrueCar Inc.
+
