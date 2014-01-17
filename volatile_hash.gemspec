@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
     s.name        = 'volatile_hash'
-    s.version     = '0.0.2'
-    s.date        = '2012-02-22'
+    s.version     = '0.0.4'
+    s.date        = '2014-01-17'
     s.summary     = "Implements LRU and TTL caches"
     s.description = "Implements key-based cache that can have a least-recently-used or time-to-live expiration strategy"
     s.authors     = ["Satya P"]
