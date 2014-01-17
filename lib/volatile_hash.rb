@@ -15,7 +15,7 @@ class VolatileHash
     def [](key)
         value = @cache[key]
         if @strategy == 'ttl'
-            if expired?(key)
+            if @registry[key] && expired?(key)
                 @cache.delete key
                 @registry.delete key
                 value = nil

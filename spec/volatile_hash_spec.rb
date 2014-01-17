@@ -29,6 +29,15 @@ describe VolatileHash do
             @cache[:x].should be_nil
         end
 
+        it "should continue returning nil for cached values after the TTL expires" do
+            @cache[:x].should == @x.to_s
+
+            sleep(0.8)
+
+            @cache[:x].should be_nil
+            @cache[:x].should be_nil
+        end
+
         it "should not throw out least-recently used value" do
             @cache[:y] = 1
 
