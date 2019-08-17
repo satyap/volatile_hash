@@ -53,9 +53,15 @@ describe VolatileHash do
         end
 
         context "key?(hash_key)" do
-          it "should return true if key is present and not expired" do
-            @cache.key?(:x).should == true
-          end
+            it "should return true if key is present and not expired" do
+                @cache.key?(:x).should == true
+            end
+
+            it "should return false if key is absent or expired" do
+                @cache.key?(:y).should == false
+                sleep(0.8)
+                @cache.key?(:x).should == false
+            end
         end
 
         context "when asked to refresh TTL on access" do
