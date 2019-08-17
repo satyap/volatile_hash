@@ -52,6 +52,12 @@ describe VolatileHash do
             @cache[:x].should be_nil
         end
 
+        context "key?(hash_key)" do
+          it "should return true if key is present and not expired" do
+            @cache.key?(:x).should == true
+          end
+        end
+
         context "when asked to refresh TTL on access" do
             it "should not forget cached values after TTL expires" do
                 cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.7, :refresh => true)
