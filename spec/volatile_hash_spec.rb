@@ -16,8 +16,7 @@ describe VolatileHash do
             @cache[:x].should == @x.to_s
         end
         
-        it 'should not have to re-calculate cached values' do
-            # double_x = double(@x)
+        it "should not have to re-calculate cached values" do
             dont_allow(@x).to_s
             @cache[:x] ||= @x.to_s
         end
@@ -103,7 +102,7 @@ describe VolatileHash do
             @cache[:x].should == @x.to_s
         end
 
-        it 'should not have to re-calculate cached values' do
+        it "should not have to re-calculate cached values" do
             dont_allow(@x).to_s
             @cache[:x] ||= @x.to_s
         end
