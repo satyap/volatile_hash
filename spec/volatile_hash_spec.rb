@@ -76,9 +76,9 @@ describe VolatileHash do
             end
         end
 
-        context 'when asked to refresh TTL on access' do
-            it 'should not forget cached values after TTL expires' do
-                cache = VolatileHash.new(strategy: 'ttl', ttl: 0.7, refresh: true)
+        context "when asked to refresh TTL on access" do
+            it "should not forget cached values after TTL expires"" do
+                cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.7, :refresh => true)
                 x = Object.new
                 cache[:x] = @x.to_s
                 sleep(0.4)
