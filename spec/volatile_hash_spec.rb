@@ -1,7 +1,8 @@
 require 'spec_helper'
+require 'rr'
 
 describe VolatileHash do
-    class Volatilehash
+  class VolatileHash
         attr_reader :cache
     end
 
@@ -16,9 +17,10 @@ describe VolatileHash do
             @cache[:x].should == @x.to_s
         end
         
-        it "should not have to re-calculate cached values" do
-            dont_allow(@x).to_s
-            @cache[:x] ||= @x.to_s
+    it 'should not have to re-calculate cached values' do
+      # double_x = double(@x)
+      mock(@x).to_s.never
+      @cache[:x] ||= double_x.to_s
         end
 
         it "should forget cached values after the TTL expires" do
@@ -64,9 +66,21 @@ describe VolatileHash do
             end
         end
 
-        context "when asked to refresh TTL on access" do
-            it "should not forget cached values after TTL expires" do
-                cache = VolatileHash.new(:strategy => 'ttl', :ttl => 0.7, :refresh => true)
+    context 'keys' do
+      it 'should return the keys of cache' do
+        @cache.keys.should == [:x]
+      end
+    end
+
+    context 'to_hash' do
+      it 'should return the native hash' do
+        @cache.to_hash.should eq(@cache.cache)
+      end
+    end
+
+    context 'when asked to refresh TTL on access' do
+      it 'should not forget cached values after TTL expires' do
+        cache = VolatileHash.new(strategy: 'ttl', ttl: 0.7, refresh: true)
                 x = Object.new
                 cache[:x] = @x.to_s
                 sleep(0.4)
@@ -90,9 +104,9 @@ describe VolatileHash do
             @cache[:x].should == @x.to_s
         end
 
-        it "should not have to re-calculate cached values" do
-            dont_allow(@x).to_s
-            @cache[:x] ||= @x.to_s
+    it 'should not have to re-calculate cached values' do
+      mock(@x).to_s.never
+      @cache[:x] ||= @x.to_s
         end
 
         it "should have only up to the last max values" do

@@ -29,6 +29,23 @@ class VolatileHash
         value #in case of LRU, just return the value that was read
     end
 
+  def keys
+    output = []
+    values = @cache.keys
+    values.each do |value|
+      output.push(value) if key?(value)
+    end
+    output
+  end
+
+  def to_hash
+    output = {}
+    values = @cache.keys
+    values.each do |value|
+      output[value] = @cache[value] if key?(value)
+    end
+    output
+  end
     def [](key)
         value = @cache[key]
         if @strategy == 'ttl'
