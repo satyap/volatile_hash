@@ -104,7 +104,7 @@ describe VolatileHash do
         end
 
         it 'should not have to re-calculate cached values' do
-            dont_allow(@x).to_s.never
+            dont_allow(@x).to_s
             @cache[:x] ||= @x.to_s
         end
 
