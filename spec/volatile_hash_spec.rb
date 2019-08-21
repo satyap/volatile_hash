@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe VolatileHash do
-    class Volatilehash
+  class VolatileHash
         attr_reader :cache
     end
 
@@ -50,6 +50,30 @@ describe VolatileHash do
             @cache[:x].should == @x.to_s
             sleep(0.4)
             @cache[:x].should be_nil
+        end
+
+        context "key?(hash_key)" do
+            it "should return true if key is present and not expired" do
+                @cache.key?(:x).should == true
+            end
+
+            it "should return false if key is absent or expired" do
+                @cache.key?(:y).should == false
+                sleep(0.8)
+                @cache.key?(:x).should == false
+            end
+        end
+
+        context 'keys' do
+            it 'should return the keys of cache' do
+                @cache.keys.should == [:x]
+            end
+        end
+
+        context 'to_hash' do
+            it 'should return the native hash' do
+                @cache.to_hash.should eq(@cache.cache)
+            end
         end
 
         context "when asked to refresh TTL on access" do

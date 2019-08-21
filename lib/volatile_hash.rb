@@ -12,6 +12,41 @@ class VolatileHash
         @refresh = options[:refresh] or false
     end
 
+    def key?(key)
+        value = @cache.key?(key)
+        if @strategy == 'ttl'
+            if @registry[key] && expired?(key)
+                @cache.delete key
+                @registry.delete key
+                value = false
+            end
+            if @refresh and @registry[key]
+                set_ttl(key)
+            end
+        else
+            lru_update key if @cache.has_key?(key)
+        end
+        value #in case of LRU, just return the value that was read
+    end
+
+    def keys
+        output = []
+        values = @cache.keys
+        values.each do |value|
+            output.push(value) if key?(value)
+        end
+        output
+    end
+
+    def to_hash
+        output = {}
+        values = @cache.keys
+        values.each do |value|
+            output[value] = @cache[value] if key?(value)
+        end
+        output
+    end
+
     def [](key)
         value = @cache[key]
         if @strategy == 'ttl'
